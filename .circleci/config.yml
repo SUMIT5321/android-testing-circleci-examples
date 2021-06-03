@@ -72,7 +72,9 @@ workflows:
       - unit-test:
           filters:
             branches:
-              only: main
+              only:
+                - main
+                - ciBranchTest
 #      - release-build:
 #          requires:
 #            - unit-test
