@@ -69,12 +69,12 @@ jobs:
 workflows:
   test-and-build:
     jobs:
-      - unit-test:
-          filters:
-            branches:
-              only:
-                - main
-                - ciBranchTest
+      - unit-test
+#          filters:
+#            branches:
+#              only:
+#                - main
+#                - ciBranchTest
 #      - release-build:
 #          requires:
 #            - unit-test
