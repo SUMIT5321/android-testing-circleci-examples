@@ -104,6 +104,8 @@ workflows:
     jobs:
       - test-job
       - test-job-2
+          requires:
+            test-job
 #      - unit-test:
 #          filters:
 #            branches:
