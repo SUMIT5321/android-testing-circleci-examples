@@ -91,6 +91,13 @@ jobs:
       - run:
           name: "Print an env var stored in a Context"
           command: echo ${CONTEXT_ENV_VAR}
+  test-job-2:
+    executor: android/android
+
+    steps:
+      - run:
+          name: "What was my custom environment variable?"
+          command: echo ${MY_ENV_VAR}
 
 workflows:
   test-and-build:
