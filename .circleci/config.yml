@@ -7,14 +7,11 @@ commands:
   create-apk-dir-var:
     description: "creates apk directory name and stores it in an env variable"
     steps:
-      - android/install-ndk:
-          ndk-sha: c3ebc83c96a4d7f539bd72c241b2be9dcd29bda9
-          ndk-version: android-ndk-r21e
       - run:
           name: move all apks under the new created directory
           command: |
-            branchName = $CIRCLE_BRANCH
-            apkDirectory = $branch | sed 's/\(.*\)Branch/\1/'
+            branchName = "ciBranchText2"
+            apkDirectory = $branchName | sed 's/\(.*\)Branch/\1/'
             echo 'export APK_DIR=$apkDirectory' >> $BASH_ENV
 
 
