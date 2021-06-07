@@ -1,3 +1,5 @@
+version: 2.1
+
 jobs: # basic units of work in a run
   build:
     docker: # use the Docker executor
