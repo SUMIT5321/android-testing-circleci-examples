@@ -10,7 +10,8 @@ commands:
       - run:
           name: move all apks under the new created directory
           command: |
-            echo 'export APK_DIR=$CIRCLE_BRANCH' >> $BASH_ENV
+            echo 'export APK_DIR=$(echo "$CIRCLE_BRANCH" | sed "s/\(.*\)Branch/\1/")' >> $BASH_ENV
+            
 
 
 jobs:
