@@ -11,8 +11,8 @@ commands:
           name: move all apks under the new created directory
           command: |
             BRANCHNAME = "ciBranchText2"
-            APKDIR = BRANCHNAME | sed 's/\(.*\)Branch/\1/'
-            echo 'export APK_DIR=APKDIR' >> $BASH_ENV
+            APKDIR = $BRANCHNAME | sed 's/\(.*\)Branch/\1/'
+            echo 'export APK_DIR=$APKDIR' >> $BASH_ENV
 
 
 jobs:
