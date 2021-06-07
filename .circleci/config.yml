@@ -10,9 +10,7 @@ commands:
       - run:
           name: move all apks under the new created directory
           command: |
-#            BRANCHNAME = "ciBranchText2"
-            APKDIR = $CIRCLE_BRANCH | sed 's/\(.*\)Branch/\1/'
-            echo 'export APK_DIR=$APKDIR' >> $BASH_ENV
+            echo 'export APK_DIR=${CIRCLE_BRANCH | sed "s/\(.*\)Branch/\1/"}' >> $BASH_ENV
 
 
 jobs:
