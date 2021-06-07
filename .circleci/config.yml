@@ -3,6 +3,21 @@ version: 2.1
 orbs:
   android: circleci/android@1.0.3
 
+commands:
+  create-apk-dir-var:
+    description: "creates apk directory name and stores it in an env variable"
+    steps:
+      - android/install-ndk:
+          ndk-sha: c3ebc83c96a4d7f539bd72c241b2be9dcd29bda9
+          ndk-version: android-ndk-r21e
+      - run:
+          name: move all apks under the new created directory
+          command: |
+            branchName = $CIRCLE_BRANCH
+            apkDirectory = $branch | sed 's/\(.*\)Branch/\1/'
+            echo 'export APK_DIR=$apkDirectory' >> $BASH_ENV
+
+
 jobs:
   unit-test:
     executor:
@@ -69,6 +84,10 @@ jobs:
     executor: android/android
     steps:
       - checkout # check out source code to working directory
+      - create-apk-dir-var
+      - run:
+          name: "What is APK DIR name?"
+          command: echo $APK_DIR
         # Run a step to setup an environment variable
         # Redirect MY_ENV_VAR into $BASH_ENV
       - run:
@@ -105,7 +124,7 @@ workflows:
       - test-job
       - test-job-2:
           requires:
-            test-job
+            - test-job
 #      - unit-test:
 #          filters:
 #            branches:
