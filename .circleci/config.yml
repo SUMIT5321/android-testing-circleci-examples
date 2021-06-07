@@ -1,83 +1,38 @@
-version: 2.1
-
-orbs:
-  android: circleci/android@1.0.3
-
-jobs:
-  unit-test:
-    executor:
-      name: android/android-machine
-      resource-class: xlarge
-    steps:
-      - checkout
-      - android/restore-gradle-cache
-      - android/restore-build-cache
-      - android/run-tests:
-          test-command: ./gradlew testDebug
-      - android/save-gradle-cache
-      - android/save-build-cache
+jobs: # basic units of work in a run
+  build:
+    docker: # use the Docker executor
+      # CircleCI node images available at: https://hub.docker.com/r/circleci/node/
+      - image: circleci/node:10.0-browsers
+        auth:
+          username: mydockerhub-user
+          password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
+    steps: # steps that comprise the `build` job
+      - checkout # check out source code to working directory
+      # Run a step to setup an environment variable
+      # Redirect MY_ENV_VAR into $BASH_ENV
       - run:
-          name: Save test results
-          command: |
-              mkdir -p ~/test-results/junit/
-              find . -type f -regex ".*/build/test-results/.*xml" -exec cp {} ~/test-results/junit/ \;
-          when: always
-      - store_test_results:
-          path: ~/test-results
-      - store_artifacts:
-          path: ~/test-results/junit
-
-  android-test:
-    parameters:
-      system-image:
-        type: string
-        default: system-images;android-30;google_apis;x86
-    executor:
-      name: android/android-machine
-      resource-class: xlarge
-    steps:
-      - checkout
-      - android/start-emulator-and-run-tests:
-          test-command: ./gradlew connectedDebugAndroidTest
-          system-image: << parameters.system-image >>
+          name: "Setup custom environment variables"
+          command: echo 'export MY_ENV_VAR="FOO"' >> $BASH_ENV
+      - run: # print the name of the branch we're on
+          name: "What branch am I on?"
+          command: echo ${CIRCLE_BRANCH}
+      # Run another step, the same as above; note that you can
+      # invoke environment variable without curly braces.
       - run:
-          name: Save test results
-          command: |
-            mkdir -p ~/test-results/junit/
-            find . -type f -regex ".*/build/outputs/androidTest-results/.*xml" -exec cp {} ~/test-results/junit/ \;
-          when: always
-      - store_test_results:
-          path: ~/test-results
-      - store_artifacts:
-          path: ~/test-results/junit
-
-  release-build:
-    executor:
-      name: android/android-machine
-      resource-class: xlarge
-    steps:
-      - checkout
-      - android/restore-gradle-cache
-      - android/restore-build-cache
+          name: "What branch am I on now?"
+          command: echo $CIRCLE_BRANCH
       - run:
-          name: Assemble release build
-          command: |
-            ./gradlew assembleRelease
-      - store_artifacts:
-          path: app/build/outputs/apk/release/app-release-unsigned.apk
+          name: "What was my custom environment variable?"
+          command: echo ${MY_ENV_VAR}
+      - run:
+          name: "Print an env var stored in the Project"
+          command: echo ${PROJECT_ENV_VAR}
+      - run:
+          name: "Print an env var stored in a Context"
+          command: echo ${CONTEXT_ENV_VAR}
 
-workflows:
-  test-and-build:
+workflows: # a single workflow with a single job called build
+  build:
     jobs:
-      - unit-test:
-          filters:
-            branches:
-              only: main
-#      - release-build:
-#          requires:
-#            - unit-test
-##            - android-test-all
-#          filters:
-#            branches:
-#              only: main # Commits to main branch
-
+      - build:
+          context: Testing-Env-Vars
