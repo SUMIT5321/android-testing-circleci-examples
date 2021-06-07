@@ -103,6 +103,7 @@ workflows:
   test-and-build:
     jobs:
       - test-job
+      - test-job-2
 #      - unit-test:
 #          filters:
 #            branches:
