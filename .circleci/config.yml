@@ -5,14 +5,10 @@ orbs:
 
 commands:
   create-apk-dir-var:
-    description: "creates apk directory name and stores it in an env variable"
+    description: "creates apk directory name and stores it in an env variable APK_DIR"
     steps:
-      - run:
-          name: move all apks under the new created directory
-          command: |
-            echo 'export APK_DIR=$(echo "$CIRCLE_BRANCH" | sed "s/\(.*\)Branch/\1/")' >> $BASH_ENV
+      - run: echo 'export APK_DIR=$(echo "$CIRCLE_BRANCH" | sed "s/\(.*\)Branch/\1/")' >> $BASH_ENV
             
-
 
 jobs:
   unit-test:
@@ -113,6 +109,13 @@ jobs:
       - run:
           name: "What was my custom environment variable?"
           command: echo ${MY_ENV_VAR}
+      - run:
+          name: "What is APK DIR name?"
+          command: echo $APK_DIR
+      - create-apk-dir-var
+      - run:
+          name: "What is APK DIR name?"
+          command: echo $APK_DIR
 
 workflows:
   test-and-build:
