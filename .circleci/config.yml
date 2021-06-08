@@ -20,7 +20,7 @@ commands:
   create-apk-dir-env-var:
     description: "creates apk directory name and stores it in an env variable APK_DIR"
     steps:
-      - run: echo 'export APK_DIR=$(echo "<<pipeline.parameters.workaround-dir>>$CIRCLE_BRANCH" | sed "s/\(.*\)Branch/\1/")' >> $BASH_ENV
+      - run: echo 'export APK_DIR=$(echo "<<pipeline.parameters.workaround-dir>>/$CIRCLE_BRANCH" | sed "s/\(.*\)Branch/\1/")' >> $BASH_ENV
             
 
 jobs:
