@@ -117,7 +117,7 @@ jobs:
       - run:
           name: move all apks under the new directory
           command: |
-            mkdir -p $APK_DIR
+            mkdir -p workaround/$APK_DIR
             pwd
             ls
             cd ~/code
@@ -125,11 +125,11 @@ jobs:
             cd ~/
             ls
             echo $APK_DIR
-      - run: echo << pipeline.parameters.apk-dir >>
+      - run: echo $(workaround/$APK_DIR)
       - persist_to_workspace:
           root: ~/code
           paths:
-            - << pipeline.parameters.apk-dir >>
+            - workaround
   test-job-2:
     executor: custom-executor
 
