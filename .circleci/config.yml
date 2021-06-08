@@ -129,7 +129,7 @@ jobs:
       - persist_to_workspace:
           root: ~/code
           paths:
-            - $APK_DIR
+            - << pipeline.parameters.apk-dir >>
   test-job-2:
     executor: custom-executor
 
