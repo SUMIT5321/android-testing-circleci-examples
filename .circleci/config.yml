@@ -83,7 +83,7 @@ jobs:
     executor: android/android
     steps:
       - checkout # check out source code to working directory
-      - create-apk-dir-var
+      - create-apk-dir-env-var
       - run:
           name: "What is APK DIR name?"
           command: echo $APK_DIR
@@ -134,7 +134,7 @@ jobs:
       - run:
           name: "What is APK DIR name?"
           command: echo $APK_DIR
-      - create-apk-dir-var
+      - create-apk-dir-env-var
       - run:
           name: "What is APK DIR name?"
           command: echo $APK_DIR
