@@ -3,6 +3,26 @@ version: 2.1
 orbs:
   android: circleci/android@1.0.3
 
+parameters:
+  workaround-dir:
+    description: This defines the directory name that wraps the dynamically created apk directory
+    type: string
+    default: workaround
+
+executors:
+  custom-executor:
+    docker:
+      - image: >-
+          circleci/android:api-29
+    working_directory: ~/code
+
+commands:
+  create-apk-dir-env-var:
+    description: "creates apk directory name and stores it in an env variable APK_DIR"
+    steps:
+      - run: echo 'export APK_DIR=$(echo "<<pipeline.parameters.workaround-dir>>/$CIRCLE_BRANCH" | sed "s/\(.*\)Branch/\1/")' >> $BASH_ENV
+            
+
 jobs:
   unit-test:
     executor:
@@ -65,14 +85,81 @@ jobs:
             ./gradlew assembleRelease
       - store_artifacts:
           path: app/build/outputs/apk/release/app-release-unsigned.apk
+  test-job:
+    executor: custom-executor
+    steps:
+      - checkout # check out source code to working directory
+      - create-apk-dir-env-var
+      - run:
+          name: "What is APK DIR name?"
+          command: echo $APK_DIR
+        # Run a step to setup an environment variable
+        # Redirect MY_ENV_VAR into $BASH_ENV
+#      - run:
+#          name: "Setup custom environment variables"
+#          command: echo 'export MY_ENV_VAR="FOO"' >> $BASH_ENV
+#      - run: # print the name of the branch we're on
+#          name: "What branch am I on?"
+#          command: echo ${CIRCLE_BRANCH}
+#      # Run another step, the same as above; note that you can
+#      # invoke environment variable without curly braces.
+#      - run:
+#          name: "What branch am I on now?"
+#          command: echo $CIRCLE_BRANCH
+#      - run:
+#          name: "What was my custom environment variable?"
+#          command: echo ${MY_ENV_VAR}
+#      - run:
+#          name: "Print an env var stored in the Project"
+#          command: echo ${PROJECT_ENV_VAR}
+#      - run:
+#          name: "Print an env var stored in a Context"
+#          command: echo ${CONTEXT_ENV_VAR}
+      - run:
+          name: move all apks under the new directory
+          command: |
+            mkdir -p $APK_DIR
+            pwd
+            ls
+            cd ~/code
+            ls
+            cd ~/
+            ls
+            echo $APK_DIR
+      - run: echo $APK_DIR
+      - persist_to_workspace:
+          root: ~/code
+          paths:
+            - workaround
+  test-job-2:
+    executor: custom-executor
+
+    steps:
+      - run:
+          name: "What was my custom environment variable?"
+          command: echo ${MY_ENV_VAR}
+      - run:
+          name: "What is APK DIR name?"
+          command: echo $APK_DIR
+      - create-apk-dir-env-var
+      - run:
+          name: "What is APK DIR name?"
+          command: echo $APK_DIR
 
 workflows:
   test-and-build:
     jobs:
-      - unit-test:
+      - test-job:
           filters:
             branches:
-              only: main
+              only: /^feature-DOSE-[0-9]+-CC/
+      - test-job-2:
+          requires:
+            - test-job
+#      - unit-test:
+#          filters:
+#            branches:
+#              only: main
 #      - release-build:
 #          requires:
 #            - unit-test
