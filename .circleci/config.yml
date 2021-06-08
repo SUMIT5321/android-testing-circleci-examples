@@ -3,6 +3,11 @@ version: 2.1
 orbs:
   android: circleci/android@1.0.3
 
+parameters:
+  apk-dir:
+    type: string
+    default: '$(echo << pipeline.git.branch >> | sed "s/\(.*\)Branch/\1/")'
+
 executors:
   custom-executor:
     docker:
@@ -120,9 +125,10 @@ jobs:
             cd ~/
             ls
             echo $APK_DIR
+      - run:
       - persist_to_workspace:
           root: ~/code
-          paths:
+          paths: echo << pipeline.parameters.apk-dir >>
             - $APK_DIR
   test-job-2:
     executor: custom-executor
