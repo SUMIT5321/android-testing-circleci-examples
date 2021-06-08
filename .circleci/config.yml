@@ -125,10 +125,10 @@ jobs:
             cd ~/
             ls
             echo $APK_DIR
-      - run:
+      - run: echo << pipeline.parameters.apk-dir >>
       - persist_to_workspace:
           root: ~/code
-          paths: echo << pipeline.parameters.apk-dir >>
+          paths:
             - $APK_DIR
   test-job-2:
     executor: custom-executor
