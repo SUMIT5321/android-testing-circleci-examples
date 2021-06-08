@@ -150,6 +150,9 @@ workflows:
   test-and-build:
     jobs:
       - test-job
+          filters:
+            branches:
+              only: /^feature-DOSE-[0-9]+-CC/
       - test-job-2:
           requires:
             - test-job
