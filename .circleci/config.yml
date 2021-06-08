@@ -67,7 +67,7 @@ jobs:
 
   release-build:
     executor:
-      name: android/android-machine
+      name: custom-executor
       resource-class: xlarge
     steps:
       - checkout
