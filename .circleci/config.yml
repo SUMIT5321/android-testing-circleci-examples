@@ -149,7 +149,7 @@ jobs:
 workflows:
   test-and-build:
     jobs:
-      - test-job
+      - test-job:
           filters:
             branches:
               only: /^feature-DOSE-[0-9]+-CC/
