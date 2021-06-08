@@ -4,9 +4,10 @@ orbs:
   android: circleci/android@1.0.3
 
 parameters:
-  apk-dir:
+  workaround-dir:
+    description: This defines the directory name that wraps the dynamically created apk directory
     type: string
-    default: '$(echo << pipeline.git.branch >> | sed "s/\(.*\)Branch/\1/")'
+    default: workaround
 
 executors:
   custom-executor:
@@ -19,7 +20,7 @@ commands:
   create-apk-dir-env-var:
     description: "creates apk directory name and stores it in an env variable APK_DIR"
     steps:
-      - run: echo 'export APK_DIR=$(echo "$CIRCLE_BRANCH" | sed "s/\(.*\)Branch/\1/")' >> $BASH_ENV
+      - run: echo 'export APK_DIR=$(echo "<<pipeline.parameters.workaround-dir>>$CIRCLE_BRANCH" | sed "s/\(.*\)Branch/\1/")' >> $BASH_ENV
             
 
 jobs:
@@ -117,7 +118,7 @@ jobs:
       - run:
           name: move all apks under the new directory
           command: |
-            mkdir -p workaround/$APK_DIR
+            mkdir -p $APK_DIR
             pwd
             ls
             cd ~/code
@@ -125,7 +126,7 @@ jobs:
             cd ~/
             ls
             echo $APK_DIR
-      - run: echo $(workaround/$APK_DIR)
+      - run: echo $APK_DIR
       - persist_to_workspace:
           root: ~/code
           paths:
